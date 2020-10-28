@@ -6,7 +6,7 @@
 	let items = [];
 
 	onMount(async () => {
-		testQuery = await createQuery("19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut");
+		testQuery = await createQuery("19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut", 1000);
 		results = await queryBitcoin(testQuery);
 
 		for(let i = 0; i < results.length; i++) {
@@ -21,10 +21,7 @@
 		items = items;
 
 		currentBalance = await checkBalance("1AcpaEcJACmAEniQ1QfeLEGR986b9Bff5Y");
-		console.log(currentBalance);
 	});
-
-	$: items;
 </script>
 
 <main>

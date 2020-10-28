@@ -1,12 +1,12 @@
 const SEND_RPC = "https://api.mattercloud.net";
 const BALANCE_CHECK_RPC = "https://api.whatsonchain.com";
 
-export let createQuery = async function(content) {
+export let createQuery = async function(content, limit) {
     let query = {
         "v": 3,
         "q": {
             "find": {"out.s2": content},
-            "limit": 1000
+            "limit": limit
         }
     };
 
