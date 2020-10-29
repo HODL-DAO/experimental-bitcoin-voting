@@ -1,5 +1,32 @@
+'use strict'
+
+import * as bsv from "bsv";
+
 const SEND_RPC = "https://api.mattercloud.net";
 const BALANCE_CHECK_RPC = "https://api.whatsonchain.com";
+
+export let wallet = async function() {
+    wallet = { address: "", privateKey: "" }
+
+    let wif = localStorage.getItem('privKey');
+
+    console.log(bsv.PrivKey);
+
+    if (wif) {
+        wallet.privateKey = bsv.PrivKey.fromWif(wif);
+    }
+
+    if (!wallet.privateKey) {
+        wallet.privateKey = bsv.PrivKey.fromRandom();
+        localStorage.setItem('privKey', wallet.privateKey.toString());
+    }
+
+    console.log(bsv);
+
+    wallet.address = bsv.Address.fromPrivKey(wallet.privateKey);
+
+    return wallet;
+}
 
 export let createQuery = async function(content, limit) {
     let query = {
