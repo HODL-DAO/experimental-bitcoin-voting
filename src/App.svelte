@@ -1,9 +1,10 @@
 <script>
 	import { onMount } from 'svelte';
-	import { createQuery, queryBitcoin, checkBalance, createDataTransaction } from './bitcoin';
+	import { wallet, createQuery, queryBitcoin, checkBalance, createDataTransaction } from './bitcoin';
 
 	let testQuery, results = [], currentBalance;
 	let items = [];
+	let loadedWallet = { address: "", privateKey: "" };
 
 	onMount(async () => {
 		testQuery = await createQuery("19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut", 1000);
@@ -20,12 +21,17 @@
 		// Force DOM to reload.
 		items = items;
 
-		currentBalance = await checkBalance("1AcpaEcJACmAEniQ1QfeLEGR986b9Bff5Y");
+		loadedWallet = await wallet();
+		console.log(loadedWallet);
+
+		currentBalance = await checkBalance(loadedWallet.address.toString());
 	});
 </script>
 
 <main>
 	<h1>Sats: {currentBalance}!</h1>
+	<h2>Address: {loadedWallet.address.toString()}</h2>
+	<h3>Private Key: {loadedWallet.privateKey.toString()}</h3>
 	{#each items as item}
 		<p>{item}</p>
 	{/each}
