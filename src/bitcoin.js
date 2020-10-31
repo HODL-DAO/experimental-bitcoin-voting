@@ -5,7 +5,9 @@ import * as bsv from "bsv";
 const SEND_RPC = "https://api.mattercloud.net";
 const BALANCE_CHECK_RPC = "https://api.whatsonchain.com";
 
-export let wallet = async function() {
+export let wallet;
+
+export let loadWallet = async function() {
     wallet = { address: "", privateKey: "" }
 
     let wif = localStorage.getItem('privKey');
@@ -72,16 +74,8 @@ export let checkBalance = async function(address) {
     return balance;
 }
 
-export let createDataTransaction = function(data, privateKey) {
-    let config = {
-        safe: true,
-        data: data,
-        pay: {
-            key: privateKey,
-            rpc: SEND_RPC,
-            feeb: 70
-        }
-    }
-
-    datapay.send(config);
+async function init() {
+    wallet = await loadWallet();
 }
+
+init();
