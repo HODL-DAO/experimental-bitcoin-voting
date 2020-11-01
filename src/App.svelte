@@ -1,10 +1,11 @@
 <script>
 	import { onMount } from 'svelte';
-	import { wallet, createQuery, queryBitcoin, checkBalance, createDataTransaction } from './bitcoin';
+	import { wallet, createQuery, queryBitcoin, checkBalance, createDataTransaction, createProxyTransaction } from './bitcoin';
 
 	let testQuery, results = [], currentBalance;
 	let items = [];
-	let loadedWallet = { address: "", privateKey: "" };
+
+	let proxyTransaction = { address: 0, amount: 0 };
 
 	onMount(async () => {
 		testQuery = await createQuery("19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut", 1000);
@@ -21,17 +22,36 @@
 		// Force DOM to reload.
 		items = items;
 
-		loadedWallet = await wallet();
-		console.log(loadedWallet);
+		console.log(wallet);
 
-		currentBalance = await checkBalance(loadedWallet.address.toString());
+		let someData = ["Data Chunk 1", "Data Chunk 2", "Data Chunk 3", "Data Chunk ..."];
+
+		// Builds a data transaction which can then later be sent.
+		createDataTransaction(someData, wallet.privateKey.toString()).then((res) => {
+			console.log(res);
+		});
+
+		// Builds a data transaction which can be funded by an external wallet.
+		createProxyTransaction(someData, wallet.privateKey.toString()).then((res) => {
+			proxyTransaction = res;
+			console.log(res);
+		});
+
+		currentBalance = await checkBalance(wallet.address.toString());
 	});
 </script>
 
 <main>
-	<h1>Sats: {currentBalance}!</h1>
-	<h2>Address: {loadedWallet.address.toString()}</h2>
-	<h3>Private Key: {loadedWallet.privateKey.toString()}</h3>
+	<h1>Balance: {currentBalance} sats!</h1>
+	<p><strong>Address:</strong> {wallet.address.toString()}</p>
+	<p><strong>Private Key:</strong> {wallet.privateKey.toString()}</p>
+
+	<hr />
+
+	<p>Pay <strong>{proxyTransaction.amount}</strong> to <strong>{proxyTransaction.address}</strong> to send this transaction!</p>
+
+	<hr />
+
 	{#each items as item}
 		<p>{item}</p>
 	{/each}
