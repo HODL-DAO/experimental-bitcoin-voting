@@ -1,9 +1,8 @@
 'use strict'
 
-import * as bsv from "bsv";
-
 const SEND_RPC = "https://api.mattercloud.net";
 const BALANCE_CHECK_RPC = "https://api.whatsonchain.com";
+const SATS_PER_BYTE = 0.75;
 
 export let wallet;
 
@@ -12,20 +11,18 @@ export let loadWallet = async function() {
 
     let wif = localStorage.getItem('privKey');
 
-    console.log(bsv.PrivKey);
-
     if (wif) {
-        wallet.privateKey = bsv.PrivKey.fromWif(wif);
+        wallet.privateKey = bsv.PrivateKey.fromWIF(wif);
     }
 
     if (!wallet.privateKey) {
-        wallet.privateKey = bsv.PrivKey.fromRandom();
+        wallet.privateKey = bsv.PrivateKey.fromRandom();
         localStorage.setItem('privKey', wallet.privateKey.toString());
     }
 
     console.log(bsv);
 
-    wallet.address = bsv.Address.fromPrivKey(wallet.privateKey);
+    wallet.address = bsv.Address.fromPrivateKey(wallet.privateKey);
 
     return wallet;
 }
@@ -68,10 +65,67 @@ export let checkBalance = async function(address) {
         return r.json();
     }).then(function(r) {
         balance = r.confirmed + r.unconfirmed;
-        console.log(balance);
     });
 
     return balance;
+}
+
+export let createValueTransaction = async function(toAddress, value, privKey) {
+    const config = {
+		safe: true,
+		pay: {
+			key: privKey,
+			rpc: SEND_RPC,
+			feeb: SATS_PER_BYTE,
+			to: [{
+				address: toAddress,
+				value: value
+			}]
+		}
+    }
+    
+    const buildTx = await new Promise((transaction) => {
+        datapay.build(config, function(error, tx) {
+            transaction(tx);
+        });
+    }).then((res) => {
+        return res;
+    });
+
+    return buildTx;
+}
+
+export let createDataTransaction = async function(txData, privKey) {
+    const config = {
+		safe: true,
+		data: txData,
+		pay: {
+			key: privKey,
+			rpc: SEND_RPC,
+			feeb: SATS_PER_BYTE
+		}
+    }
+
+    const buildTx = await new Promise((transaction) => {
+        datapay.build(config, function(error, tx) {
+            transaction(tx);
+        });
+    }).then((res) => {
+        return res;
+    });
+
+    return buildTx;
+}
+
+export let createProxyTransaction = async function(txData, privKey) {
+    const payment = await proxypay({
+        key: privKey,
+        outputs: [
+            { data: txData }
+        ]
+    });
+
+    return { address: payment.address, amount: payment.requiredSatoshis, bip21URI: payment.bip21URI }
 }
 
 async function init() {
