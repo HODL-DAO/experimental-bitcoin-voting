@@ -1,4 +1,7 @@
 <script>
+	import 'bulma/css/bulma.css'
+	import { Button } from 'svelma'
+	import '@fortawesome/fontawesome-free/css/all.css'
 	import { onMount } from 'svelte';
 	import { wallet, createQuery, queryBitcoin, checkBalance, createDataTransaction, createProxyTransaction } from './bitcoin';
 
@@ -42,6 +45,8 @@
 </script>
 
 <main>
+	<Button type="is-primary">I'm a Button!</Button>
+
 	<h1>Balance: {currentBalance} sats!</h1>
 	<p><strong>Address:</strong> {wallet.address.toString()}</p>
 	<p><strong>Private Key:</strong> {wallet.privateKey.toString()}</p>
