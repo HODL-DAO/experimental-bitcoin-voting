@@ -3,6 +3,8 @@
 	import { Button } from 'svelma'
 	import '@fortawesome/fontawesome-free/css/all.css'
 	import { onMount } from 'svelte';
+
+	import Nav from './components/Nav.svelte';
 	import { wallet, createQuery, queryBitcoin, checkBalance, createDataTransaction, createProxyTransaction } from './bitcoin';
 
 	let testQuery, results = [], currentBalance;
@@ -45,6 +47,7 @@
 </script>
 
 <main>
+	<Nav address={wallet.address.toString()} />
 	<Button type="is-primary">I'm a Button!</Button>
 
 	<h1>Balance: {currentBalance} sats!</h1>
