@@ -48,7 +48,6 @@
 
 <main>
 	<Nav address={wallet.address.toString()} />
-	<Button type="is-primary">I'm a Button!</Button>
 
 	<h1>Balance: {currentBalance} sats!</h1>
 	<p><strong>Address:</strong> {wallet.address.toString()}</p>
@@ -69,7 +68,6 @@
 	main {
 		text-align: center;
 		padding: 1em;
-		max-width: 240px;
 		margin: 0 auto;
 	}
 
@@ -82,6 +80,7 @@
 
 	@media (min-width: 640px) {
 		main {
+			min-width: none;
 			max-width: none;
 		}
 	}
