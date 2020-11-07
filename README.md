@@ -32,3 +32,4 @@ Navigate to *localhost:5000* in your browser and you're good to go!
 
 ### Voting
 ...
+
